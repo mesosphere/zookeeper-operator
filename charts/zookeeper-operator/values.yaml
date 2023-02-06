@@ -8,8 +8,8 @@ global:
   # - private-registry-key
 
 image:
-  repository: pravega/zookeeper-operator
-  tag: 0.2.14
+  repository: mesosphere/zookeeper-operator
+  tag: 0.2.15-d2iq
   pullPolicy: IfNotPresent
 
 securityContext: {}
