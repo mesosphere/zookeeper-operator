@@ -18,7 +18,7 @@ TEST_REPO=mesosphere/$(PROJECT_NAME)
 APP_REPO=mesosphere/$(APP_NAME)
 VERSION=$(shell git describe --always --tags --dirty | tr -d "v" | sed "s/\(.*\)-g`git rev-parse --short HEAD`/\1/")
 GIT_SHA=$(shell git rev-parse --short HEAD)
-TEST_IMAGE=$(TEST_REPO)-testimages:$(VERSION)
+TEST_IMAGE=$(TEST_REPO):testimages-$(VERSION)
 DOCKER_TEST_PASS=testzkop@123
 DOCKER_TEST_USER=testzkop
 .PHONY: all build check clean test
