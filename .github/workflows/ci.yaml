@@ -47,7 +47,7 @@ jobs:
       with:
         driver: docker
         container-runtime: containerd
-        kubernetes-version: v1.23.1
+        kubernetes-version: v1.27.6
         wait: all
     # - name: Codecov
     #   uses: codecov/codecov-action@v1.0.12
