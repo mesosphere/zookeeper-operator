@@ -61,7 +61,7 @@ jobs:
     - name: verify minikube
       run: |
         which minikube
-        minikube --version
+        minikube version
         kubectl get pods -A -o wide
 
     # - uses: docker/setup-buildx-action@v3
