@@ -13,6 +13,7 @@ CRD_OPTIONS ?= "crd"
 PROJECT_NAME=zookeeper-operator
 EXPORTER_NAME=zookeeper-exporter
 APP_NAME=zookeeper
+RELEASE_REGISTRY ?= ghcr.io
 REPO=mesosphere/$(PROJECT_NAME)
 TEST_REPO=mesosphere/$(PROJECT_NAME)
 APP_REPO=mesosphere/$(APP_NAME)
@@ -128,17 +129,17 @@ build-go:
 		-o bin/$(EXPORTER_NAME)-windows-amd64.exe cmd/exporter/main.go
 
 build-image:
-	docker build --build-arg VERSION=$(VERSION) --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY) --build-arg DISTROLESS_DOCKER_REGISTRY=$(DISTROLESS_DOCKER_REGISTRY) --build-arg GIT_SHA=$(GIT_SHA) -t $(REPO):$(VERSION) .
-	docker tag $(REPO):$(VERSION) $(REPO):latest
+	docker build --build-arg VERSION=$(VERSION) --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY) --build-arg DISTROLESS_DOCKER_REGISTRY=$(DISTROLESS_DOCKER_REGISTRY) --build-arg GIT_SHA=$(GIT_SHA) -t $(RELEASE_REGISTRY)/$(REPO):$(VERSION) .
+	docker tag $(RELEASE_REGISTRY)/$(REPO):$(VERSION) $(RELEASE_REGISTRY)/$(REPO):latest
 
 build-zk-image:
 
-	docker build --build-arg VERSION=$(VERSION)  --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY) --build-arg GIT_SHA=$(GIT_SHA) -t $(APP_REPO):$(VERSION) ./docker
-	docker tag $(APP_REPO):$(VERSION) $(APP_REPO):latest
+	docker build --build-arg VERSION=$(VERSION)  --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY) --build-arg GIT_SHA=$(GIT_SHA) -t $(RELEASE_REGISTRY)/$(APP_REPO):$(VERSION) ./docker
+	docker tag $(RELEASE_REGISTRY)/$(APP_REPO):$(VERSION) $(RELEASE_REGISTRY)/$(APP_REPO):latest
 
 build-zk-image-swarm:
 	docker build --build-arg VERSION=$(VERSION)-swarm  --build-arg DOCKER_REGISTRY=$(DOCKER_REGISTRY) --build-arg GIT_SHA=$(GIT_SHA) \
-		-f ./docker/Dockerfile-swarm -t $(APP_REPO):$(VERSION)-swarm ./docker
+		-f ./docker/Dockerfile-swarm -t $(RELEASE_REGISTRY)/$(APP_REPO):$(VERSION)-swarm ./docker
 
 test:
 	go test $$(go list ./... | grep -v /vendor/ | grep -v /test/e2e) -race -coverprofile=coverage.txt -covermode=atomic
@@ -168,10 +169,10 @@ test-login:
 	echo "$(DOCKER_TEST_PASS)" | docker login -u "$(DOCKER_TEST_USER)" --password-stdin
 
 push: build-image build-zk-image login
-	docker push $(REPO):$(VERSION)
-	docker push $(REPO):latest
-	docker push $(APP_REPO):$(VERSION)
-	docker push $(APP_REPO):latest
+	docker push $(RELEASE_REGISTRY)/$(REPO):$(VERSION)
+	docker push $(RELEASE_REGISTRY)/$(REPO):latest
+	docker push $(RELEASE_REGISTRY)/$(APP_REPO):$(VERSION)
+	docker push $(RELEASE_REGISTRY)/$(APP_REPO):latest
 
 clean:
 	rm -f bin/$(PROJECT_NAME)
