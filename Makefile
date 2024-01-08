@@ -15,11 +15,11 @@ EXPORTER_NAME=zookeeper-exporter
 APP_NAME=zookeeper
 RELEASE_REGISTRY ?= ghcr.io
 REPO=mesosphere/$(PROJECT_NAME)
-TEST_REPO=mesosphere/$(PROJECT_NAME)
+TEST_REPO=testzkop/$(PROJECT_NAME)
 APP_REPO=mesosphere/$(APP_NAME)
 VERSION=$(shell git describe --always --tags --dirty | tr -d "v" | sed "s/\(.*\)-g`git rev-parse --short HEAD`/\1/")
 GIT_SHA=$(shell git rev-parse --short HEAD)
-TEST_IMAGE=$(TEST_REPO):testimages-$(VERSION)
+TEST_IMAGE=$(TEST_REPO)-testimages:$(VERSION)
 DOCKER_TEST_PASS=testzkop@123
 DOCKER_TEST_USER=testzkop
 .PHONY: all build check clean test
@@ -47,7 +47,6 @@ crds: ## Generate CRDs
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image pravega/zookeeper-operator=$(TEST_IMAGE)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
-
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy-test: manifests kustomize
@@ -106,7 +105,7 @@ generate:
 	echo '{{- end }}' >> charts/zookeeper-operator/templates/zookeeper.pravega.io_zookeeperclusters_crd.yaml
 
 
-build: test build-go build-image
+build: test build-go build-image build-zk-image
 
 build-go:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
@@ -168,7 +167,7 @@ login:
 test-login:
 	echo "$(DOCKER_TEST_PASS)" | docker login -u "$(DOCKER_TEST_USER)" --password-stdin
 
-push: build-image build-zk-image login
+push: build-image build-zk-image
 	docker push $(RELEASE_REGISTRY)/$(REPO):$(VERSION)
 	docker push $(RELEASE_REGISTRY)/$(REPO):latest
 	docker push $(RELEASE_REGISTRY)/$(APP_REPO):$(VERSION)
