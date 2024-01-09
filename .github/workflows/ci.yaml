@@ -60,8 +60,9 @@ jobs:
       uses: medyagh/setup-minikube@latest
       with:
         driver: none
-        container-runtime: docker
+        container-runtime: containerd
         kubernetes-version: ${{ env.KUBERNETES_VERSION }}
+
         wait: all
     - name: verify minikube
       run: |
