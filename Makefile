@@ -148,9 +148,9 @@ test:
 test-e2e: test-e2e-remote
 
 test-e2e-remote:
-  make test-login
-  docker build . -t $(TEST_IMAGE)
-  docker push $(TEST_IMAGE)
+	make test-login
+	docker build . -t $(TEST_IMAGE)
+	docker push $(TEST_IMAGE)
 	make deploy
 	RUN_LOCAL=false go test -v -timeout 2h ./test/e2e... -args -ginkgo.v
 	make undeploy
