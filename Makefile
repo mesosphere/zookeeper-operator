@@ -153,7 +153,7 @@ push-test-images:
 	minikube image load $(TEST_IMAGE)
 
 test-e2e-remote: push-test-images
-	make test-login
+	#make test-login
 	make deploy
 	RUN_LOCAL=false go test -v -timeout 2h ./test/e2e... -args -ginkgo.v
 	make undeploy
