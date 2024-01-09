@@ -148,7 +148,7 @@ test-e2e: test-e2e-remote
 
 push-test-images:
 	docker build . -t $(TEST_IMAGE)
-	minikube cache add $(TEST_IMAGE)
+	minikube image load $(TEST_IMAGE)
 
 test-e2e-remote: push-test-images
 	make test-login
