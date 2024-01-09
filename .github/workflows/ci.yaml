@@ -21,7 +21,8 @@ env:
 jobs:
   build:
     runs-on:
-    - ubuntu-latest
+    - self-hosted
+    - large-cgv2
     permissions:
       contents: read
       packages: write
