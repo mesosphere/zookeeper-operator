@@ -14,11 +14,6 @@ on:
     types:
       - created
 
-env:
-  MINIKUBE_VERSION: 1.25.2
-  KUBERNETES_VERSION: v1.23.1
-  CHANGE_MINIKUBE_NONE_USER: true
-
 # jobs to run
 jobs:
   build:
@@ -28,7 +23,12 @@ jobs:
       contents: read
       packages: write
     steps:
-
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     - name: Set up Go 1.21
       uses: actions/setup-go@v2
       with:
@@ -46,65 +46,15 @@ jobs:
       run: make check
     - name: unit tests
       run: make test
-    #------------------------------------------
-    # - name: Login to GHCR
-    #   uses: docker/login-action@v3
-    #   with:
-    #     registry: ghcr.io
-    #     username: ${{ github.repository_owner }}
-    #     password: ${{ secrets.GITHUB_TOKEN }}`
-    # - name: install utilites
-    #   run: | 
-    #     sudo mount --make-rshared /
-    #     sudo apt-get update
-    #     sudo apt-get install -y build-essential conntrack
-    # - name: install kubectl
-    #   uses: azure/setup-kubectl@v3
-    #   with:
-    #     version: '${{ env.KUBERNETES_VERSION }}'
-    # - name: minikube setup
-    #   uses: medyagh/setup-minikube@latest
-    #   with:
-    #     driver: none
-    #     container-runtime: docker
-    #     kubernetes-version: ${{ env.KUBERNETES_VERSION }}
-    #     minikube-version: ${{ env.MINIKUBE_VERSION }}
-    #     wait: all
-    # - name: verify minikube
-    #   run: |
-    #     which minikube
-    #     minikube version
-    #     minikube update-context
-    #     minikube profile list
-    #     kubectl get pods -A -o wide
-    # - name: setup e2e environment
-    #   run: |
-    #     kubectl create clusterrolebinding add-on-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:default
-    #     kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username="testanisha"  --docker-password="123456789" --docker-email=testimage456@gmail.com
-    # - name: E2E
-    #   run: sudo make test-e2e 
-    #------------------------------------------
     # This fails    
     # - name: Codecov
     #   uses: codecov/codecov-action@v1.0.12
-    #------------------------------------------
-    # This is now working.... 
     - name: Set env
       run: |
-        echo "KUBERNETES_VERSION=v1.27.6" >> $GITHUB_ENV
-        echo "MINIKUBE_VERSION=v1.32.0" >> $GITHUB_ENV
+        echo "KUBERNETES_VERSION=v1.23.1" >> $GITHUB_ENV
+        echo "MINIKUBE_VERSION=v1.25.2" >> $GITHUB_ENV
         echo "KUBERNETES_CONFIG_FILE=$HOME/.kube/config" >> $GITHUB_ENV
         echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
-    - name: crictl setup
-      run: | 
-        export OS=xUbuntu_22.04
-        export CRIO_VERSION=1.25
-        echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /"| sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-        echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$CRIO_VERSION/$OS/ /"|sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.list
-        curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION/$OS/Release.key | sudo apt-key add -
-        curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key add -
-        sudo apt-get update
-        sudo apt-get install cri-tools -y
     - name: minikube setup
       run: |
         curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
@@ -127,9 +77,6 @@ jobs:
         sudo kubectl create secret docker-registry regcred --docker-server=https://index.docker.io/v1/ --docker-username="testanisha"  --docker-password="123456789" --docker-email=testimage456@gmail.com
     - name: E2E
       run: sudo make test-e2e
-    #------------------------------------------
-
-
   publish:
     name: Publish docker image
     runs-on:

@@ -47,8 +47,6 @@ crds: ## Generate CRDs
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image pravega/zookeeper-operator=$(TEST_IMAGE)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
-	#kubectl wait --for condition=ESTABLISHED crd/zookeeperclusters.zookeeper.pravega.io --timeout=5m
-
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
 deploy-test: manifests kustomize
