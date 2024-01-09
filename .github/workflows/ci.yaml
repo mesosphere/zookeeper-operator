@@ -14,6 +14,9 @@ on:
     types:
       - created
 
+env:
+  KUBERNETES_VERSION: v1.27.6
+
 # jobs to run
 jobs:
   build:
@@ -51,12 +54,16 @@ jobs:
       run: make check
     - name: unit tests
       run: make test
+    - uses: azure/setup-kubectl@v3
+      id: install
+      with:
+        version: '${{ env.KUBERNETES_VERSION }}'
     - name: minikube setup
       uses: medyagh/setup-minikube@latest
       with:
         driver: docker
         container-runtime: containerd
-        kubernetes-version: v1.27.6
+        kubernetes-version: ${{ env.KUBERNETES_VERSION }}
         wait: all
     - name: verify minikube
       run: |
