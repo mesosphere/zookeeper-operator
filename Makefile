@@ -47,7 +47,7 @@ crds: ## Generate CRDs
 deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image pravega/zookeeper-operator=$(TEST_IMAGE)
 	$(KUSTOMIZE) build config/default | kubectl apply -f -
-	kubectl wait --for condition=ESTABLISHED crd/zookeeperclusters.zookeeper.pravega.io --timeout=5m
+	#kubectl wait --for condition=ESTABLISHED crd/zookeeperclusters.zookeeper.pravega.io --timeout=5m
 
 
 # Deploy controller in the configured Kubernetes cluster in ~/.kube/config
@@ -96,7 +96,7 @@ controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessar
 $(CONTROLLER_GEN): $(LOCALBIN)
 	test -s $(LOCALBIN)/controller-gen || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
 
-all: crds generate check build
+all: generate check build
 
 generate:
 	$(CONTROLLER_GEN) object paths="./..."
