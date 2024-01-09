@@ -1,0 +1,43 @@
+# workflow name
+name: Publish Release
+
+# on events
+on:
+  workflow_dispatch:
+
+# jobs to run
+jobs:
+  publish:
+    name: Publish docker image
+    runs-on:
+    - ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+    - name: Set up Go 1.21
+      uses: actions/setup-go@v2
+      with:
+        go-version: "1.21"
+      id: go
+    - name: Set up Go for root
+      run: |
+        sudo ln -sf `which go` `sudo which go` || true
+        sudo go version
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+    - name: get go version
+      run: go version
+    - name: Login to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Pushing docker images
+      run: sudo make push
+    - name: Uploading binary files
+      uses: actions/upload-artifact@v2
+      with:
+        name: zookeeper-exporter
+        path: bin/zookeeper-exporter*
