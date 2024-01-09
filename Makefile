@@ -95,7 +95,7 @@ controller-gen: $(CONTROLLER_GEN) ## Download controller-gen locally if necessar
 $(CONTROLLER_GEN): $(LOCALBIN)
 	test -s $(LOCALBIN)/controller-gen || GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-tools/cmd/controller-gen@$(CONTROLLER_TOOLS_VERSION)
 
-all: generate check build
+all: crds generate check build
 
 generate:
 	$(CONTROLLER_GEN) object paths="./..."
@@ -106,7 +106,7 @@ generate:
 	echo '{{- end }}' >> charts/zookeeper-operator/templates/zookeeper.pravega.io_zookeeperclusters_crd.yaml
 
 
-build: test build-go build-image
+build: test build-go build-image build-zk-image
 
 build-go:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
