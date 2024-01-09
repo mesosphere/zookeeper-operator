@@ -16,6 +16,7 @@ on:
 
 env:
   KUBERNETES_VERSION: v1.27.6
+  CHANGE_MINIKUBE_NONE_USER: true
 
 # jobs to run
 jobs:
@@ -61,12 +62,12 @@ jobs:
         driver: none
         container-runtime: docker
         kubernetes-version: ${{ env.KUBERNETES_VERSION }}
-
         wait: all
     - name: verify minikube
       run: |
         which minikube
         minikube version
+        minikube update-context
         minikube profile list
         kubectl get pods -A -o wide
     - name: setup e2e environment

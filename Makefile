@@ -15,11 +15,11 @@ EXPORTER_NAME=zookeeper-exporter
 APP_NAME=zookeeper
 RELEASE_REGISTRY ?= ghcr.io
 REPO=mesosphere/$(PROJECT_NAME)
-TEST_REPO=mesosphere/$(PROJECT_NAME)
+TEST_REPO=testzkop/$(PROJECT_NAME)
 APP_REPO=mesosphere/$(APP_NAME)
 VERSION=$(shell git describe --always --tags --dirty | tr -d "v" | sed "s/\(.*\)-g`git rev-parse --short HEAD`/\1/")
 GIT_SHA=$(shell git rev-parse --short HEAD)
-TEST_IMAGE=$(TEST_REPO):testimages-$(VERSION)
+TEST_IMAGE=$(TEST_REPO)-testimages:$(VERSION)
 DOCKER_TEST_PASS=testzkop@123
 DOCKER_TEST_USER=testzkop
 .PHONY: all build check clean test
@@ -147,13 +147,10 @@ test:
 
 test-e2e: test-e2e-remote
 
-push-test-images:
-	docker build . -t $(TEST_IMAGE)
-	minikube profile list
-	minikube image load $(TEST_IMAGE)
-
-test-e2e-remote: push-test-images
-	#make test-login
+test-e2e-remote:
+  make test-login
+  docker build . -t $(TEST_IMAGE)
+  docker push $(TEST_IMAGE)
 	make deploy
 	RUN_LOCAL=false go test -v -timeout 2h ./test/e2e... -args -ginkgo.v
 	make undeploy
