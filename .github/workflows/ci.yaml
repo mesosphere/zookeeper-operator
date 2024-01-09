@@ -21,8 +21,7 @@ env:
 jobs:
   build:
     runs-on:
-    - self-hosted
-    - large-cgv2
+    - ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -59,8 +58,8 @@ jobs:
     - name: minikube setup
       uses: medyagh/setup-minikube@latest
       with:
-        driver: docker
-        container-runtime: containerd
+        driver: none
+        container-runtime: docker
         kubernetes-version: ${{ env.KUBERNETES_VERSION }}
         wait: all
     - name: verify minikube
