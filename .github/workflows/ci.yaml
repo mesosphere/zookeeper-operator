@@ -95,6 +95,16 @@ jobs:
         echo "MINIKUBE_VERSION=v1.32.0" >> $GITHUB_ENV
         echo "KUBERNETES_CONFIG_FILE=$HOME/.kube/config" >> $GITHUB_ENV
         echo "CHANGE_MINIKUBE_NONE_USER=true" >> $GITHUB_ENV
+    - name: crictl setup
+      run: | 
+        export OS=xUbuntu_22.04
+        export CRIO_VERSION=1.25
+        echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /"| sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+        echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$CRIO_VERSION/$OS/ /"|sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION.list
+        curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:$CRIO_VERSION/$OS/Release.key | sudo apt-key add -
+        curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | sudo apt-key add -
+        sudo apt-get update
+        sudo apt-get install cri-tools -y
     - name: minikube setup
       run: |
         curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$KUBERNETES_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
