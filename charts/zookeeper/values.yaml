@@ -2,8 +2,8 @@ replicas: 3
 maxUnavailableReplicas:
 
 image:
-  repository: pravega/zookeeper
-  tag: 0.2.15
+  repository: ghcr.io/mesosphere/zookeeper
+  tag: 0.2.15-d2iq
   pullPolicy: IfNotPresent
 
 triggerRollingRestart: false
