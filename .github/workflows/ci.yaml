@@ -19,17 +19,13 @@ jobs:
     runs-on:
     - ubuntu-latest
     steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version-file: 'go.mod'
       id: go
-    - name: Set up Go for root
-      run: |
-        sudo ln -sf `which go` `sudo which go` || true
-        sudo go version
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
     - name: get go version
       run: go version
     - name: Gofmt and License checks
@@ -77,19 +73,15 @@ jobs:
     needs: build
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v4
+      with:
+        fetch-tags: true
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
         go-version-file: 'go.mod'
       id: go
-    - name: Set up Go for root
-      run: |
-        sudo ln -sf `which go` `sudo which go` || true
-        sudo go version
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v4
-      with:
-        fetch-tags: true
     - name: get go version
       run: go version
     - name: Login to GHCR
