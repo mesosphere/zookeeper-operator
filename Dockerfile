@@ -1,7 +1,7 @@
 ARG DOCKER_REGISTRY
 ARG DISTROLESS_DOCKER_REGISTRY
-ARG ALPINE_VERSION=3.18
-FROM ${DOCKER_REGISTRY:+$DOCKER_REGISTRY/}golang:1.21-alpine${ALPINE_VERSION} as go-builder
+ARG ALPINE_VERSION=3.20
+FROM ${DOCKER_REGISTRY:+$DOCKER_REGISTRY/}golang:1.22-alpine${ALPINE_VERSION} as go-builder
 
 ARG PROJECT_NAME=zookeeper-operator
 ARG REPO_PATH=github.com/mesosphere/$PROJECT_NAME
@@ -27,7 +27,7 @@ COPY controllers/ controllers/
 
 # Build
 RUN GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o /src/${PROJECT_NAME} \
-    -ldflags "-X ${REPO_PATH}/pkg/version.Version=${VERSION} -X ${REPO_PATH}/pkg/version.GitSHA=${GIT_SHA}" main.go
+  -ldflags "-X ${REPO_PATH}/pkg/version.Version=${VERSION} -X ${REPO_PATH}/pkg/version.GitSHA=${GIT_SHA}" main.go
 
 FROM ${DISTROLESS_DOCKER_REGISTRY:-gcr.io/}distroless/static-debian11:nonroot AS final
 
