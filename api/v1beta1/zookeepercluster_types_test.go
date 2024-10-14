@@ -79,7 +79,7 @@ var _ = Describe("ZookeeperCluster Types", func() {
 			})
 
 			It("Checking tostring() function", func() {
-				Ω(z.Spec.Image.ToString()).To(Equal("ghcr.io/mesosphere/zookeeper:0.2.15-d2iq"))
+				Ω(z.Spec.Image.ToString()).To(Equal("ghcr.io/mesosphere/zookeeper:0.2.15-d2iq.1"))
 			})
 
 		})

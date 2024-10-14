@@ -3,7 +3,7 @@ maxUnavailableReplicas:
 
 image:
   repository: ghcr.io/mesosphere/zookeeper
-  tag: 0.2.15-d2iq
+  tag: 0.2.15-d2iq.1
   pullPolicy: IfNotPresent
 
 triggerRollingRestart: false
