@@ -19,10 +19,10 @@ jobs:
     runs-on:
     - ubuntu-latest
     steps:
-    - name: Set up Go 1.21
-      uses: actions/setup-go@v2
+    - name: Set up Go
+      uses: actions/setup-go@v5
       with:
-        go-version: "1.21"
+        go-version-file: 'go.mod'
       id: go
     - name: Set up Go for root
       run: |
@@ -36,7 +36,7 @@ jobs:
       run: make check
     - name: unit tests
       run: make test
-    # This fails    
+    # This fails
     # - name: Codecov
     #   uses: codecov/codecov-action@v1.0.12
     - name: Set env
@@ -77,10 +77,10 @@ jobs:
     needs: build
     if: github.event_name == 'release' && github.event.action == 'created'
     steps:
-    - name: Set up Go 1.21
-      uses: actions/setup-go@v2
+    - name: Set up Go
+      uses: actions/setup-go@v5
       with:
-        go-version: "1.21"
+        go-version-file: 'go.mod'
       id: go
     - name: Set up Go for root
       run: |
