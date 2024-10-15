@@ -42,7 +42,7 @@ jobs:
     - name: Pushing docker images
       run: make push
     - name: Uploading binary files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: zookeeper-exporter
         path: bin/zookeeper-exporter*
